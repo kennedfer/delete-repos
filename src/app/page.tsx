@@ -1,5 +1,6 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import styles from "./page.module.css";
 import { useSession, signIn, signOut } from "next-auth/react";
 
@@ -17,25 +18,22 @@ declare module "next-auth" {
 export default function Home() {
   const { data: session } = useSession();
 
-  const fetchGithubData = async () => {
-    if (!session?.user?.accessToken) return;
-
-    const response = await fetch("https://api.github.com/user", {
-      headers: {
-        Authorization: `Bearer ${session.user.accessToken}`,
-      },
-    });
-
-    const data = await response.json();
-    console.log(data);
+  const accessRepositoriesPage = () => {
+    redirect("/repositories");
   };
+
+  const signToGithub = () => signIn("github", { callbackUrl: "/repositories" });
+
+  const signOutFromGithub = () => signOut({ callbackUrl: "/" });
 
   return (
     <div className={styles.page}>
       <div>{session?.user.name ?? "Usuario deslogado"}</div>
-      <button onClick={fetchGithubData}>Mostrar informações</button>
-      <button onClick={() => signIn("github")}>Logar</button>
-      <button onClick={() => signOut()}>Sair</button>
+      <button onClick={accessRepositoriesPage}>
+        Ir para página de repositorios
+      </button>
+      <button onClick={signToGithub}>Logar</button>
+      <button onClick={signOutFromGithub}>Sair</button>
     </div>
   );
 }

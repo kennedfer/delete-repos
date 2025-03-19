@@ -1,13 +1,14 @@
-'use client'
-import { useSession, signIn, signOut  } from "next-auth/react"
+"use client";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
-export default function RepositoriesPage(){
-    const {data: session, status} = useSession();
+export default function RepositoriesPage() {
+  const { data: session, status } = useSession();
 
-    if(status == "unauthenticated"){
-        // signIn();
-        // Redirecionar para a página de Login.
-    }
+  if (status == "unauthenticated") {
+    //Redireciona caso o usuário nao esteja logado
+    redirect("/");
+  }
 
-    return <div></div>
+  return <div>{session?.user.name}</div>;
 }
